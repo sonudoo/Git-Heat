@@ -1,7 +1,7 @@
 from diffiehellman.diffiehellman import DiffieHellman
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
-import socket, json, _thread, sys
+import socket, json, _thread, sys, time
 
 
 def receiveData(s, length):
@@ -12,6 +12,14 @@ def receiveData(s, length):
 		ldata += len(receivedData)
 		data += receivedData
 	return data
+
+def getHoursMinutesSeconds(time):
+	time = int(time)
+	minutes = time // 60
+	hours = minutes // 60
+	seconds = time % 60
+	minutes = minutes - 60*hours
+	return [str(hours), str(minutes), str(seconds)]
 
 def padInteger(i, length):
 	i = str(i)
@@ -28,6 +36,11 @@ progress = 0
 
 def showProgress():
 	global progress
+	lastTime = time.time()
+	lastProgress = progress
+	speed = 0
+	timeLeft = -1
+	time.sleep(1)
 	while progress < fileSize:
 		pc = (progress*100)//fileSize
 		i = 0
@@ -40,14 +53,22 @@ def showProgress():
 			i += 1
 		print("] ", end='')
 		print(str(pc), end='')
-		print("% Complete", end='')
-	i = 0
-	print("\r"+"[", end='')
-	while i < 50:
-		print("\u2588", end='')
-		i += 1
-	print("] ", end='')
-	print("100% Complete", end='')
+		print("% Complete\t", end='')
+		print(str(round(speed, 2)), end='')
+		print(" KB/s,\tTime Left: ", end='')
+		print(':'.join(getHoursMinutesSeconds(timeLeft)), end='')
+		print("      ", end='')
+		bytesTransferred = progress - lastProgress
+		currentTime = time.time()
+		timeTaken = currentTime - lastTime
+		speed = bytesTransferred / (1024 * timeTaken)
+		if speed == 0.0:
+			timeLeft = -1
+		else:
+			timeLeft = (fileSize - progress) / (1024 * speed)
+		lastProgress = progress
+		lastTime = currentTime
+		time.sleep(1)
 
 
 dh = DiffieHellman()
@@ -164,6 +185,13 @@ while progress < fileSize:
 	progress += len(receivedData)
 file.close()
 
+i = 0
+print("\r"+"[", end='')
+while i < 50:
+	print("\u2588", end='')
+	i += 1
+print("] ", end='')
+print("100% Complete", end='')
 print('\n\nFile download complete..')
 file = open(fileName, 'rb')
 encryptedData = file.read()
