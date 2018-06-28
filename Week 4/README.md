@@ -61,13 +61,13 @@ KEY_EXCHANGE
 
 <pre>
 FILELIST
-&lt;Number of segments (each of 1024 bytes) required for file list&gt;
+&lt;Size of file list in bytes (20 bytes)&gt;
 </pre>
 
 ### File List Body
 
 <pre>
-1024 bytes of content
+Content
 </pre>
 
 ### Ready Signal (5 Bytes)
@@ -94,11 +94,11 @@ REQUEST
 <pre>
 FILE
 &lt;Name of the File&gt;
-&lt;Number of segments (each of 1024 bytes) required for file&gt;
+&lt;Size of the file (20 bytes)&gt;
 </pre>
 
 ### File Transfer Body
 
 <pre>
-1024 bytes of content
+Content
 </pre>
