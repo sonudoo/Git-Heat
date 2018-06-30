@@ -11,16 +11,12 @@
 
 2. Put the absolute path of each file to be shared in '.config' file, one file on each line.
 
-3. Run the server on the computer which wishes to share the file.
+3. Modify the line 3 of the script 'main.py' accordingly.
+ 
+4. Run the program.
 
     `
-    python3 server.py
-    `
-
-4. Run the client on the computer which wishes to download the file.
-
-    `
-    python3 client.py
+    python3 main.py
     `
 
 
